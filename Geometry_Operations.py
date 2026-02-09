@@ -26,7 +26,7 @@ def Length(bar):
 def VectorTwoNorm(vector):
     norm = 0
     for i in range(0,len(vector)):
-        norm += vector[1]**2
+        norm += vector[i]**2
     return np.sqrt(norm)
 
 # Find a shared node between two bars
