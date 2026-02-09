@@ -75,27 +75,29 @@ def ComputeReactions(nodes):
             
             #Sume of forces in Y Direction
     pin_y_reaction = 0 
-    if(roller_node.constraint=="roller_no_xdisp"):
-        for node in nodes:
-            pin_y_reaction += node.yforce_external
-        pin_node.AddReactionYForce(pin_y_reaction)
-    elif (roller_node.constraint=="roller_no_ydisp"):
-       pin_y_reaction += - roller_reaction 
     for node in nodes:
             pin_y_reaction += node.yforce_external
-    pin_node.AddReactionYForce(pin_y_reaction)
+    # if(roller_node.constraint=="roller_no_xdisp"):
+    #     for node in nodes:
+    #         pin_y_reaction += node.yforce_external
+    #     pin_node.AddReactionYForce(pin_y_reaction)
+    if (roller_node.constraint=="roller_no_ydisp"):
+       pin_y_reaction += roller_reaction 
+    pin_node.AddReactionYForce(pin_y_reaction*-1)
     
     #Sum of the forces in the X Direction
     pin_x_reaction = 0
-    if(roller_node.constraint=="roller_no_ydisp"):
-        for node in nodes:
-            pin_x_reaction += node.xforce_external
-        pin_node.AddReactionXForce(pin_x_reaction)
-    elif (roller_node.constraint=="roller_no_xdisp"):
-       pin_x_reaction += - roller_reaction 
-       for node in nodes:
-            pin_x_reaction += node.xforce_external
-       pin_node.AddReactionXForce(pin_x_reaction)
+    # if(roller_node.constraint=="roller_no_ydisp"):
+    #     for node in nodes:
+    #         pin_x_reaction += node.xforce_external
+    #     pin_node.AddReactionXForce(pin_x_reaction)
+    # elif (roller_node.constraint=="roller_no_xdisp"):
+    #    pin_x_reaction += - roller_reaction 
+    for node in nodes:
+         pin_x_reaction += node.xforce_external
+    if (roller_node.constraint=="roller_no_xdisp"):
+         pin_x_reaction += roller_reaction
+    pin_node.AddReactionXForce(pin_x_reaction*-1)
        
        
     
