@@ -3,7 +3,7 @@
 """
 Created on Wed Jul 14 14:34:19 2021
 
-@author: kendrick shepherd
+@author: Kendrick shepherd and Cam Brimhall
 """
 
 import sys
@@ -27,7 +27,7 @@ def StaticallyDeterminate(nodes,bars):
     
     # Compute if b + r = 2j (Equation 3-1 of the textbook)
     if(n_bars + n_reactions < 2*n_nodes):
-        sys.exit("The truss is unstable")
+        sys.exit("The truss is unstable; did you input all of the reaction constraints correctly?")
     elif(n_bars + n_reactions > 2*n_nodes):
         sys.exit("The truss is statically indeterminate, and cannot be resolved using method of joints")
     else:
@@ -51,11 +51,65 @@ def ComputeReactions(nodes):
     if(n_pins != 1 or n_roller != 1):
         sys.exit("A more clever way must be found to compute the reaction forces")
     
+    
     # Continue from here
     # Sum of moments about the pin
+    [pin_x, pin_y] = pin_node.location
+    """Gets the x and Y coordinate of the node correspodning to the pin"""
+    [roller_x, roller_y] = roller_node.location
+    """Gets the x and y node associated with the roller"""
+    roller_reaction = 0
+    
+    for node in nodes: 
+        [node_x, node_y]  = node.location
+        #contributions in the y direction
+        roller_reaction += node.yforce_external * (node_x - pin_x)
+        #contributions in the x direction
+        roller_reaction += node.xforce_external *(pin_y - node_y)
+    if(roller_node.constraint=="roller_no_xdisp"):
+            roller_reaction = -roller_reaction/(pin_y - roller_y)
+            roller_node.AddReactionXForce(roller_reaction)
+    elif(roller_node.constraint=="roller_no_ydisp"):
+            roller_reaction = -roller_reaction/(roller_x - pin_x)
+            roller_node.AddReactionYForce(roller_reaction)
+            
+            #Sume of forces in Y Direction
+    pin_y_reaction = 0 
+    if(roller_node.constraint=="roller_no_xdisp"):
+        for node in nodes:
+            pin_y_reaction += node.yforce_external
+        pin_node.AddReactionYForce(pin_y_reaction)
+    elif (roller_node.constraint=="roller_no_ydisp"):
+       pin_y_reaction += - roller_reaction 
+    for node in nodes:
+            pin_y_reaction += node.yforce_external
+    pin_node.AddReactionYForce(pin_y_reaction)
+    
+    #Sum of the forces in the X Direction
+    pin_x_reaction = 0
+    if(roller_node.constraint=="roller_no_ydisp"):
+        for node in nodes:
+            pin_x_reaction += node.xforce_external
+        pin_node.AddReactionXForce(pin_x_reaction)
+    elif (roller_node.constraint=="roller_no_xdisp"):
+       pin_x_reaction += - roller_reaction 
+       for node in nodes:
+            pin_x_reaction += node.xforce_external
+       pin_node.AddReactionXForce(pin_x_reaction)
+       
+       
+    
+         
+        
+       
+        
+       
+        
+ 
+        
+        
 
-    # sum of forces in y direction
 
-    # sum of forces in x direction
+   
     
     
